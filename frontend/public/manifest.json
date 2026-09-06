@@ -1,0 +1,9 @@
+{
+  "name": "BrewHaus QR Menu",
+  "short_name": "BrewHaus",
+  "start_url": "/menu/brewhaus",
+  "display": "standalone",
+  "background_color": "#1a110a",
+  "theme_color": "#1a110a",
+  "icons": []
+}
