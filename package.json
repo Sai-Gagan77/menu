@@ -2,6 +2,7 @@
   "name": "coffee-qr-menu",
   "private": true,
   "version": "1.0.0",
+  "type": "module",
   "description": "Coffee Shop QR Menu — mobile-first PWA (scan → landing → OTP → menu with vertical tabs → live order status)",
   "scripts": {
     "dev": "concurrently \"npm run dev --prefix backend\" \"npm run dev --prefix frontend\"",
@@ -15,6 +16,8 @@
     "prisma": "^5.22.0"
   },
   "dependencies": {
-    "@prisma/client": "^5.22.0"
+    "@prisma/client": "^5.22.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1"
   }
 }

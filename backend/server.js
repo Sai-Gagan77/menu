@@ -9,6 +9,14 @@ const PORT = process.env.PORT || 4000;
 app.use(cors());
 app.use(express.json());
 
+// Normalize URLs so routes match whether called with /api or rewritten without
+app.use((req, res, next) => {
+  if (!req.url.startsWith("/api")) {
+    req.url = "/api" + req.url;
+  }
+  next();
+});
+
 // In-memory stores (restart resets)
 const otpStore = new Map(); // phone -> { otp, expiresAt }
 const orders = new Map(); // orderId -> order
@@ -170,18 +178,22 @@ import path from "path";
 import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-// Serve frontend build in production (if present)
-const frontendDist = path.join(__dirname, "../frontend/dist");
-app.use(express.static(frontendDist));
-// SPA fallback for non-API routes
-app.get("*", (req, res, next) => {
-  if (req.path.startsWith("/api")) return next();
-  res.sendFile(path.join(frontendDist, "index.html"), (err) => {
-    if (err) next();
+// Serve frontend build in production when running standalone (if present)
+if (!process.env.VERCEL) {
+  const frontendDist = path.join(__dirname, "../frontend/dist");
+  app.use(express.static(frontendDist));
+  // SPA fallback for non-API routes
+  app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api")) return next();
+    res.sendFile(path.join(frontendDist, "index.html"), (err) => {
+      if (err) next();
+    });
   });
-});
 
-app.listen(PORT, () => {
-  console.log(`☕ Coffee QR backend running at http://localhost:${PORT}`);
-  console.log(`   Try: curl http://localhost:${PORT}/api/shops/brewhaus/menu`);
-});
+  app.listen(PORT, () => {
+    console.log(`☕ Coffee QR backend running at http://localhost:${PORT}`);
+    console.log(`   Try: curl http://localhost:${PORT}/api/shops/brewhaus/menu`);
+  });
+}
+
+export default app;
